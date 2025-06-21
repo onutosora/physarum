@@ -74,7 +74,11 @@ func create_compute_shaders() -> void:
 func create_diffuse_compute_shader() -> void:
 	diffuse_compute = ComputeShaderProxy.new(diffuse_shader_file, compute_groups)
 	diffuse_compute.bind_buffer_uniform(0, PackedFloat32Array([0.0, 0.0]).to_byte_array())
-	diffuse_compute.bind_buffer_uniform(1, PackedFloat32Array([diffuse_scale]).to_byte_array())
+	diffuse_compute.bind_buffer_uniform(1, PackedFloat32Array([
+		diffuse_scale,
+		width,
+		height
+	]).to_byte_array())
 	diffuse_compute.bind_texture_uniform(2, pheromone_image, RenderingDevice.DATA_FORMAT_R32_SFLOAT)
 	diffuse_compute.bind_texture_uniform(3, pheromone_image, RenderingDevice.DATA_FORMAT_R32_SFLOAT)
 	diffuse_compute.consolidate_uniforms()
@@ -159,7 +163,11 @@ func coords_torus(coords: Vector2) -> Vector2:
 
 func execute_diffuse(delta:float) -> void:
 	diffuse_compute.update_buffer_uniform(0, PackedFloat32Array([time, delta]).to_byte_array())
-	diffuse_compute.update_buffer_uniform(1, PackedFloat32Array([diffuse_scale]).to_byte_array())
+	diffuse_compute.update_buffer_uniform(1, PackedFloat32Array([
+		diffuse_scale,
+		width,
+		height
+	]).to_byte_array())
 	diffuse_compute.update_texture_uniform(2, pheromone_image)
 	diffuse_compute.update_texture_uniform(3, pheromone_image)
 	diffuse_compute.execute()

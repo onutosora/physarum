@@ -9,6 +9,8 @@ layout (set = 0, binding = 0, std430) buffer Timing {
 } timing;
 layout (set = 0, binding = 1, std430) buffer Params {
     float diffusion;
+    float width;
+    float height;
 } params;
 layout (set = 0, binding = 2, r32f) restrict uniform readonly image2D pheromone_image_old;
 layout (set = 0, binding = 3, r32f) restrict uniform writeonly image2D pheromone_image_new;
@@ -17,12 +19,22 @@ float rand(vec3 co){
     return fract(sin(dot(co, vec3(12.9898, 78.233, -393.54))) * 43758.5453);
 }
 
+ivec2 close_position(ivec2 position) {
+    int iwidth  = int(params.width);
+    int iheight = int(params.height);
+    if      (position.x < 0       ) position.x = iwidth-1;
+    else if (position.x >= iwidth ) position.x = 0;
+    if      (position.y < 0       ) position.y = iheight-1;
+    else if (position.y >= iheight) position.y = 0;
+    return position;
+}
+
 void main() {
     ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
     
     float total_pheromone = 0.0;
     for (int x=-1;x<2;x++) for (int y=-1;y<2;y++) {
-        ivec2 new_pos = pos + ivec2(x,y);
+        ivec2 new_pos = close_position(pos + ivec2(x,y));
         total_pheromone += imageLoad(pheromone_image_old, new_pos).r;
     }
     total_pheromone /= 9.0;
