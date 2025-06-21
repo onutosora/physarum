@@ -239,13 +239,13 @@ func get_click_texture_position() -> Vector2:
 
 func close_position(position:Vector2) -> Vector2:
 	if position.x < 0:
-		position.x = width-1
+		position.x = width+position.x
 	elif position.x >= width:
-		position.x = 0
+		position.x = position.x-width
 	if position.y < 0:
-		position.y = height-1
+		position.y = height+position.y
 	elif position.y >= height:
-		position.y = 0
+		position.y = position.y-height
 	return position
 
 func fill_field(value:float) -> void:

@@ -29,10 +29,10 @@ vec2 rotate(vec2 v, float a) {
 }
 
 vec2 close_position(vec2 position) {
-    if      (position.x < 0.0           ) position.x = params.width-1.0;
-    else if (position.x >= params.width ) position.x = 0.0;
-    if      (position.y < 0.0           ) position.y = params.height-1.0;
-    else if (position.y >= params.height) position.y = 0.0;
+    if      (position.x < 0.0           ) position.x = params.width+position.x;
+    else if (position.x >= params.width ) position.x = position.x-params.width;
+    if      (position.y < 0.0           ) position.y = params.height+position.y;
+    else if (position.y >= params.height) position.y = position.y-params.height;
     return position;
 }
 
