@@ -218,7 +218,7 @@ func draw_pheromone_input(event: InputEvent) -> void:
 			for x in range(-brush_radius,brush_radius): for y in range(-brush_radius,brush_radius):
 				var shift = Vector2(x,y)
 				if shift.length() <= brush_radius:
-					var pos = click_pos + shift
+					var pos = close_position(click_pos + shift)
 					pheromone_image.set_pixelv(pos, Color(100.0,0,0))
 
 func get_click_texture_position() -> Vector2:
@@ -236,6 +236,17 @@ func get_click_texture_position() -> Vector2:
 		local_mouse.y -= margin_y
 		local_mouse *= aspect
 	return local_mouse
+
+func close_position(position:Vector2) -> Vector2:
+	if position.x < 0:
+		position.x = width-1
+	elif position.x >= width:
+		position.x = 0
+	if position.y < 0:
+		position.y = height-1
+	elif position.y >= height:
+		position.y = 0
+	return position
 
 func fill_field(value:float) -> void:
 	pheromone_image.fill(Color(value,0,0,0))
