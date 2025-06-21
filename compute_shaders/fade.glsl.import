@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://cmt0ghg3tiacd"
+path="res://.godot/imported/fade.glsl-d730444f03f7a31546dd8994abe3075d.res"
+
+[deps]
+
+source_file="res://compute_shaders/fade.glsl"
+dest_files=["res://.godot/imported/fade.glsl-d730444f03f7a31546dd8994abe3075d.res"]
+
+[params]
+

@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://dpmg1chk2u2go"]
+
+[ext_resource type="Script" uid="uid://bxarua4s2i5kq" path="res://scenes/main/ants_compute.gd" id="1_hyk8p"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 5
+metadata/_edit_lock_ = true
+
+[node name="AntsCompute" type="Node" parent="." node_paths=PackedStringArray("texture_rect")]
+script = ExtResource("1_hyk8p")
+texture_rect = NodePath("../TextureRect")
+fade_scale = null
+diffuse_scale = null
