@@ -15,9 +15,8 @@ layout (set = 0, binding = 1, std430) buffer Params {
     float random_sensors_angle;
     float sensors_distance;
 } params;
-layout (set = 0, binding = 2, r16f) restrict uniform readonly image2D pheromone_image_old;
-layout (set = 0, binding = 3, r16f) restrict uniform writeonly image2D pheromone_image_new;
-layout (set = 0, binding = 4, rgba32f) restrict uniform image2D agents_pos_dir;
+layout (set = 0, binding = 2, r16f) restrict uniform image2D pheromone_image;
+layout (set = 0, binding = 3, rgba32f) restrict uniform image2D agents_pos_dir;
 
 
 vec2 rotate(vec2 v, float a) {
@@ -50,8 +49,8 @@ void main() {
 
 
     // Spill pheromone
-    float current_pheromone = imageLoad(pheromone_image_old, ivec2(agent_position)).r;
-    imageStore(pheromone_image_new, ivec2(agent_position), vec4(current_pheromone+params.agent_pheromone));
+    float current_pheromone = imageLoad(pheromone_image, ivec2(agent_position)).r;
+    imageStore(pheromone_image, ivec2(agent_position), vec4(current_pheromone+params.agent_pheromone));
 
 
     // Calculate new agent position
@@ -67,9 +66,9 @@ void main() {
     vec2 sensor_left    = close_position( agent_position + left_direction  * params.sensors_distance );
     vec2 sensor_right   = close_position( agent_position + right_direction * params.sensors_distance );
 
-    float pheromone_forward = imageLoad(pheromone_image_old, ivec2(sensor_forward)).r;
-    float pheromone_left    = imageLoad(pheromone_image_old, ivec2(sensor_left   )).r;
-    float pheromone_right   = imageLoad(pheromone_image_old, ivec2(sensor_right  )).r;
+    float pheromone_forward = imageLoad(pheromone_image, ivec2(sensor_forward)).r;
+    float pheromone_left    = imageLoad(pheromone_image, ivec2(sensor_left   )).r;
+    float pheromone_right   = imageLoad(pheromone_image, ivec2(sensor_right  )).r;
 
     float max_pheromone = max(pheromone_forward, max(pheromone_left, pheromone_right));
     

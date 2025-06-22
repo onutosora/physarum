@@ -107,8 +107,7 @@ func create_agents_compute_shader() -> void:
 		sensors_distance
 	]).to_byte_array())
 	agents_compute.bind_texture_uniform(2, pheromone_image, RenderingDevice.DATA_FORMAT_R16_SFLOAT)
-	agents_compute.bind_texture_uniform(3, pheromone_image, RenderingDevice.DATA_FORMAT_R16_SFLOAT)
-	agents_compute.bind_texture_uniform(4, agents_pos_dir_image, RenderingDevice.DATA_FORMAT_R32G32B32A32_SFLOAT)
+	agents_compute.bind_texture_uniform(3, agents_pos_dir_image, RenderingDevice.DATA_FORMAT_R32G32B32A32_SFLOAT)
 	agents_compute.consolidate_uniforms()
 
 func create_render_compute_shader() -> void:
@@ -210,11 +209,10 @@ func execute_agents(delta: float) -> void:
 		sensors_distance
 	]).to_byte_array())
 	agents_compute.update_texture_uniform(2, pheromone_image)
-	agents_compute.update_texture_uniform(3, pheromone_image)
-	agents_compute.update_texture_uniform(4, agents_pos_dir_image)
+	agents_compute.update_texture_uniform(3, agents_pos_dir_image)
 	agents_compute.execute()
-	agents_compute.get_texture_uniform_data(3, pheromone_image)
-	agents_compute.get_texture_uniform_data(4, agents_pos_dir_image)
+	agents_compute.get_texture_uniform_data(2, pheromone_image)
+	agents_compute.get_texture_uniform_data(3, agents_pos_dir_image)
 
 func execute_render() -> void:
 	render_compute.update_texture_uniform(0, pheromone_image)
