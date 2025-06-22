@@ -20,12 +20,8 @@ float rand(vec3 co){
 }
 
 ivec2 close_position(ivec2 position) {
-    int iwidth  = int(params.width);
-    int iheight = int(params.height);
-    if      (position.x < 0       ) position.x = iwidth+position.x;
-    else if (position.x >= iwidth ) position.x = position.x-iwidth;
-    if      (position.y < 0       ) position.y = iheight+position.y;
-    else if (position.y >= iheight) position.y = position.y-iheight;
+    position.x = int(mod(position.x, params.width));
+    position.y = int(mod(position.y, params.height));
     return position;
 }
 
