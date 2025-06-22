@@ -39,7 +39,7 @@ void main() {
     }
     total_pheromone /= 9.0;
     float start_pheromone = imageLoad(pheromone_image_old, pos).r;
-    imageStore(pheromone_image_new, pos, vec4(
-        mix(start_pheromone, total_pheromone, params.diffusion*timing.delta*60.0*start_pheromone/100.0)
-    ));
+    float mixed_pheromone = mix(start_pheromone, total_pheromone, params.diffusion*timing.delta*60.0*start_pheromone/100.0);
+    mixed_pheromone = clamp(mixed_pheromone, 0.0, 100.0);
+    imageStore(pheromone_image_new, pos, vec4(mixed_pheromone));
 }

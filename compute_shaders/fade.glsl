@@ -17,5 +17,6 @@ void main() {
 	ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
 	float pheromone = imageLoad(pheromone_image, pos).r;
 	pheromone = max(0.0, pheromone - params.fading*timing.delta*pheromone/100.0);
+	pheromone = clamp(pheromone, 0.0, 100.0);
 	imageStore(pheromone_image, pos, vec4(pheromone,0.0,0.0,0.0));
 }
