@@ -9,7 +9,7 @@ layout (set = 0, binding = 0, std430) buffer Timing {
 layout (set = 0, binding = 1, std430) buffer Params {
     float fading;
 } params;
-layout (set = 0, binding = 2, r32f) restrict uniform image2D pheromone_image;
+layout (set = 0, binding = 2, r16f) restrict uniform image2D pheromone_image;
 
 
 

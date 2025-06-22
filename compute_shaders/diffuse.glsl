@@ -12,8 +12,8 @@ layout (set = 0, binding = 1, std430) buffer Params {
     float width;
     float height;
 } params;
-layout (set = 0, binding = 2, r32f) restrict uniform readonly image2D pheromone_image_old;
-layout (set = 0, binding = 3, r32f) restrict uniform writeonly image2D pheromone_image_new;
+layout (set = 0, binding = 2, r16f) restrict uniform readonly image2D pheromone_image_old;
+layout (set = 0, binding = 3, r16f) restrict uniform writeonly image2D pheromone_image_new;
 
 float rand(vec3 co){
     return fract(sin(dot(co, vec3(12.9898, 78.233, -393.54))) * 43758.5453);

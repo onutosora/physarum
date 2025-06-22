@@ -15,8 +15,8 @@ layout (set = 0, binding = 1, std430) buffer Params {
     float random_sensors_angle;
     float sensors_distance;
 } params;
-layout (set = 0, binding = 2, r32f) restrict uniform readonly image2D pheromone_image_old;
-layout (set = 0, binding = 3, r32f) restrict uniform writeonly image2D pheromone_image_new;
+layout (set = 0, binding = 2, r16f) restrict uniform readonly image2D pheromone_image_old;
+layout (set = 0, binding = 3, r16f) restrict uniform writeonly image2D pheromone_image_new;
 layout (set = 0, binding = 4, rgba32f) restrict uniform image2D agents_pos_dir;
 
 

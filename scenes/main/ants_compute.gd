@@ -59,7 +59,7 @@ func _ready() -> void:
 	texture_rect.gui_input.connect(draw_pheromone_input)
 
 func create_images() -> void:
-	pheromone_image = Image.create(width, height, false, Image.FORMAT_RF)
+	pheromone_image = Image.create(width, height, false, Image.FORMAT_RH)
 	pheromone_image.fill(Color.BLACK)
 	
 	agents_pos_dir_image = Image.create(width, height, false, Image.FORMAT_RGBAF)
@@ -83,15 +83,15 @@ func create_diffuse_compute_shader() -> void:
 		width,
 		height
 	]).to_byte_array())
-	diffuse_compute.bind_texture_uniform(2, pheromone_image, RenderingDevice.DATA_FORMAT_R32_SFLOAT)
-	diffuse_compute.bind_texture_uniform(3, pheromone_image, RenderingDevice.DATA_FORMAT_R32_SFLOAT)
+	diffuse_compute.bind_texture_uniform(2, pheromone_image, RenderingDevice.DATA_FORMAT_R16_SFLOAT)
+	diffuse_compute.bind_texture_uniform(3, pheromone_image, RenderingDevice.DATA_FORMAT_R16_SFLOAT)
 	diffuse_compute.consolidate_uniforms()
 
 func create_fade_compute_shader() -> void:
 	fade_compute = ComputeShaderProxy.new(fade_shader_file, compute_groups)
 	fade_compute.bind_buffer_uniform(0, PackedFloat32Array([0.0]).to_byte_array())
 	fade_compute.bind_buffer_uniform(1, PackedFloat32Array([fade_scale]).to_byte_array())
-	fade_compute.bind_texture_uniform(2, pheromone_image, RenderingDevice.DATA_FORMAT_R32_SFLOAT)
+	fade_compute.bind_texture_uniform(2, pheromone_image, RenderingDevice.DATA_FORMAT_R16_SFLOAT)
 	fade_compute.consolidate_uniforms()
 
 func create_agents_compute_shader() -> void:
@@ -106,14 +106,14 @@ func create_agents_compute_shader() -> void:
 		random_angle,
 		sensors_distance
 	]).to_byte_array())
-	agents_compute.bind_texture_uniform(2, pheromone_image, RenderingDevice.DATA_FORMAT_R32_SFLOAT)
-	agents_compute.bind_texture_uniform(3, pheromone_image, RenderingDevice.DATA_FORMAT_R32_SFLOAT)
+	agents_compute.bind_texture_uniform(2, pheromone_image, RenderingDevice.DATA_FORMAT_R16_SFLOAT)
+	agents_compute.bind_texture_uniform(3, pheromone_image, RenderingDevice.DATA_FORMAT_R16_SFLOAT)
 	agents_compute.bind_texture_uniform(4, agents_pos_dir_image, RenderingDevice.DATA_FORMAT_R32G32B32A32_SFLOAT)
 	agents_compute.consolidate_uniforms()
 
 func create_render_compute_shader() -> void:
 	render_compute = ComputeShaderProxy.new(render_shader_file, compute_groups)
-	render_compute.bind_texture_uniform(0, pheromone_image, RenderingDevice.DATA_FORMAT_R32_SFLOAT)
+	render_compute.bind_texture_uniform(0, pheromone_image, RenderingDevice.DATA_FORMAT_R16_SFLOAT)
 	render_compute.bind_texture_uniform(1, render_image, RenderingDevice.DATA_FORMAT_R8G8B8A8_UNORM)
 	render_compute.consolidate_uniforms()
 
@@ -127,7 +127,7 @@ func create_paint_compute_shader() -> void:
 		0,
 		0
 	]).to_byte_array())
-	paint_compute.bind_texture_uniform(1, pheromone_image, RenderingDevice.DATA_FORMAT_R32_SFLOAT)
+	paint_compute.bind_texture_uniform(1, pheromone_image, RenderingDevice.DATA_FORMAT_R16_SFLOAT)
 	paint_compute.consolidate_uniforms()
 
 func init_agents() -> void:

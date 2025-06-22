@@ -11,7 +11,7 @@ layout (set = 0, binding = 0, std430) buffer Params {
     int radius;
     int value;
 } params;
-layout (set = 0, binding = 1, r32f) restrict uniform image2D pheromone_image;
+layout (set = 0, binding = 1, r16f) restrict uniform image2D pheromone_image;
 
 ivec2 close_position(ivec2 position) {
     position.x = int(mod(position.x, params.width));
