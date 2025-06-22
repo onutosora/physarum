@@ -34,8 +34,7 @@ var paint_compute: ComputeShaderProxy
 
 var pheromone_image: Image
 var render_image: Image
-var agents_positions_image: Image
-var agents_directions_image: Image
+var agents_pos_dir_image: Image
 
 var render_texture: ImageTexture
 var time:float = 0.0
@@ -63,11 +62,8 @@ func create_images() -> void:
 	pheromone_image = Image.create(width, height, false, Image.FORMAT_RF)
 	pheromone_image.fill(Color.BLACK)
 	
-	agents_positions_image = Image.create(width, height, false, Image.FORMAT_RGF)
-	agents_positions_image.fill(Color.BLACK)
-	
-	agents_directions_image = Image.create(width, height, false, Image.FORMAT_RGF)
-	agents_directions_image.fill(Color.BLACK)
+	agents_pos_dir_image = Image.create(width, height, false, Image.FORMAT_RGBAF)
+	agents_pos_dir_image.fill(Color.BLACK)
 	
 	render_image = Image.create(width, height, false, Image.FORMAT_RGBA8)
 	render_image.fill(Color.BLACK)
@@ -112,8 +108,7 @@ func create_agents_compute_shader() -> void:
 	]).to_byte_array())
 	agents_compute.bind_texture_uniform(2, pheromone_image, RenderingDevice.DATA_FORMAT_R32_SFLOAT)
 	agents_compute.bind_texture_uniform(3, pheromone_image, RenderingDevice.DATA_FORMAT_R32_SFLOAT)
-	agents_compute.bind_texture_uniform(4, agents_positions_image, RenderingDevice.DATA_FORMAT_R32G32_SFLOAT)
-	agents_compute.bind_texture_uniform(5, agents_directions_image, RenderingDevice.DATA_FORMAT_R32G32_SFLOAT)
+	agents_compute.bind_texture_uniform(4, agents_pos_dir_image, RenderingDevice.DATA_FORMAT_R32G32B32A32_SFLOAT)
 	agents_compute.consolidate_uniforms()
 
 func create_render_compute_shader() -> void:
@@ -140,8 +135,7 @@ func init_agents() -> void:
 		for y in range(height):
 			var position = Vector2(randf_range(0,width),randf_range(0,height))
 			var direction = Vector2(randf_range(-1,1),randf_range(-1,1)).normalized()
-			agents_positions_image.set_pixel (x,y,Color(position.x,position.y,0))
-			agents_directions_image.set_pixel(x,y,Color(direction.x,direction.y,0))
+			agents_pos_dir_image.set_pixel (x,y,Color(position.x,position.y,direction.x,direction.y))
 
 func fill_pheromone_with_noise() -> void:
 	var shift_power = 100.0
@@ -217,12 +211,10 @@ func execute_agents(delta: float) -> void:
 	]).to_byte_array())
 	agents_compute.update_texture_uniform(2, pheromone_image)
 	agents_compute.update_texture_uniform(3, pheromone_image)
-	agents_compute.update_texture_uniform(4, agents_positions_image)
-	agents_compute.update_texture_uniform(5, agents_directions_image)
+	agents_compute.update_texture_uniform(4, agents_pos_dir_image)
 	agents_compute.execute()
 	agents_compute.get_texture_uniform_data(3, pheromone_image)
-	agents_compute.get_texture_uniform_data(4, agents_positions_image)
-	agents_compute.get_texture_uniform_data(5, agents_directions_image)
+	agents_compute.get_texture_uniform_data(4, agents_pos_dir_image)
 
 func execute_render() -> void:
 	render_compute.update_texture_uniform(0, pheromone_image)

@@ -17,8 +17,7 @@ layout (set = 0, binding = 1, std430) buffer Params {
 } params;
 layout (set = 0, binding = 2, r32f) restrict uniform readonly image2D pheromone_image_old;
 layout (set = 0, binding = 3, r32f) restrict uniform writeonly image2D pheromone_image_new;
-layout (set = 0, binding = 4, rg32f) restrict uniform image2D agents_positions;
-layout (set = 0, binding = 5, rg32f) restrict uniform image2D agents_directions;
+layout (set = 0, binding = 4, rgba32f) restrict uniform image2D agents_pos_dir;
 
 
 vec2 rotate(vec2 v, float a) {
@@ -47,8 +46,9 @@ void main() {
 
 
     // Get agent data
-    vec2 agent_position = imageLoad(agents_positions, invoc_vec).rg;
-    vec2 agent_direction = imageLoad(agents_directions, invoc_vec).rg;
+    vec4 pos_dir = imageLoad(agents_pos_dir, invoc_vec);
+    vec2 agent_position = pos_dir.rg;
+    vec2 agent_direction = pos_dir.ba;
 
 
     // Spill pheromone
@@ -59,7 +59,6 @@ void main() {
     // Calculate new agent position
     vec2 new_agent_position = agent_position+agent_direction*timing.delta*60.0;
     new_agent_position = close_position(new_agent_position);
-    imageStore(agents_positions, invoc_vec, vec4(new_agent_position.x,new_agent_position.y,0.0,0.0));
     
 
     // Calculate new agent agent direction
@@ -83,5 +82,10 @@ void main() {
     float rand_fac = rand(agent_position+agent_direction)*2.0 - 1.0;
     new_agent_direction = rotate(new_agent_direction, rand_fac * params.random_sensors_angle);
 
-    imageStore(agents_directions, invoc_vec, vec4(new_agent_direction.x, new_agent_direction.y, 0.0, 0.0));
+    imageStore(agents_pos_dir, invoc_vec, vec4(
+        new_agent_position.x,
+        new_agent_position.y,
+        new_agent_direction.x,
+        new_agent_direction.y
+    ));
 }
