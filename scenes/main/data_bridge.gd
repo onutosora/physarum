@@ -60,6 +60,13 @@ var brush_radius: int:
 	get:
 		return compute_node.brush_radius
 
+var brush_power: int:
+	set(val):
+		compute_node.brush_power = int(val)
+		property_changed.emit("brush_power", val)
+	get:
+		return compute_node.brush_power
+
 func _ready() -> void:
 	property_changed.emit('fade_scale', fade_scale)
 	property_changed.emit('diffuse_scale', diffuse_scale)
@@ -69,6 +76,7 @@ func _ready() -> void:
 	property_changed.emit('random_angle', random_angle)
 	property_changed.emit('agents_number', agents_number)
 	property_changed.emit('brush_radius', brush_radius)
+	property_changed.emit("brush_power", brush_power)
 
 func fill_field()->void:
 	compute_node.fill_field(100.0)
@@ -80,8 +88,8 @@ func clear_field()->void:
 	compute_node.fill_field(0.0)
 
 func randomize_settings()->void:
-	fade_scale       = randf_range(0,100)
-	diffuse_scale    = randf_range(0,1.0)
+	#fade_scale       = randf_range(0,100)
+	#diffuse_scale    = randf_range(0,1.0)
 	agent_pheromone  = randf_range(0,100)
 	sensors_distance = randf_range(0,50)
 	sensors_angle    = randf_range(0,90)

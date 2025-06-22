@@ -9,8 +9,8 @@
 [ext_resource type="Script" uid="uid://b5cqwuiw1sc74" path="res://scenes/main/fps_label.gd" id="4_ow5a4"]
 
 [sub_resource type="Gradient" id="Gradient_iuonh"]
-offsets = PackedFloat32Array(0, 0.261261, 0.540541, 0.72973, 1)
-colors = PackedColorArray(0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1)
+offsets = PackedFloat32Array(0, 0.224242, 0.563636, 0.745455, 0.89697, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.155851, 0.00018487, 0.439646, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_k2fmo"]
 gradient = SubResource("Gradient_iuonh")
@@ -64,10 +64,22 @@ size_flags_vertical = 3
 theme_override_constants/separation = 4
 metadata/_edit_lock_ = true
 
-[node name="TextureRect" type="TextureRect" parent="RightPanelMargin/VBoxContainer/HBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="RightPanelMargin/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 6
+
+[node name="MarginContainer" type="MarginContainer" parent="RightPanelMargin/VBoxContainer/HBoxContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="TextureRect" type="TextureRect" parent="RightPanelMargin/VBoxContainer/HBoxContainer/PanelContainer/MarginContainer"]
 material = SubResource("ShaderMaterial_k2fmo")
 layout_mode = 2
 size_flags_horizontal = 3
+expand_mode = 2
 stretch_mode = 5
 metadata/_edit_lock_ = true
 
@@ -133,6 +145,7 @@ text = "Fade"
 [node name="FadeSlider" type="HSlider" parent="RightPanelMargin/VBoxContainer/HBoxContainer/RightPanel/HBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/FieldGrid"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+scrollable = false
 
 [node name="PropsReader" type="Node" parent="RightPanelMargin/VBoxContainer/HBoxContainer/RightPanel/HBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/FieldGrid/FadeSlider" node_paths=PackedStringArray("source_node")]
 script = ExtResource("2_l3cfh")
@@ -161,6 +174,7 @@ custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 max_value = 1.0
 step = 0.01
+scrollable = false
 
 [node name="PropsReader" type="Node" parent="RightPanelMargin/VBoxContainer/HBoxContainer/RightPanel/HBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/FieldGrid/DiffusionSlider" node_paths=PackedStringArray("source_node")]
 script = ExtResource("2_l3cfh")
@@ -247,6 +261,7 @@ size_flags_vertical = 4
 max_value = 100000.0
 step = 100.0
 rounded = true
+scrollable = false
 
 [node name="PropsReader" type="Node" parent="RightPanelMargin/VBoxContainer/HBoxContainer/RightPanel/HBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/AgentsGrid/AgentsNumberSlider" node_paths=PackedStringArray("source_node")]
 script = ExtResource("2_l3cfh")
@@ -277,6 +292,7 @@ trail"
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_vertical = 4
+scrollable = false
 
 [node name="PropsReader" type="Node" parent="RightPanelMargin/VBoxContainer/HBoxContainer/RightPanel/HBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/AgentsGrid/PheromoneSlider" node_paths=PackedStringArray("source_node")]
 script = ExtResource("2_l3cfh")
@@ -306,6 +322,7 @@ angle"
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_vertical = 4
+scrollable = false
 
 [node name="PropsReader" type="Node" parent="RightPanelMargin/VBoxContainer/HBoxContainer/RightPanel/HBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/AgentsGrid/AngleSlider" node_paths=PackedStringArray("source_node")]
 script = ExtResource("2_l3cfh")
@@ -335,6 +352,7 @@ angle"
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_vertical = 4
+scrollable = false
 
 [node name="PropsReader" type="Node" parent="RightPanelMargin/VBoxContainer/HBoxContainer/RightPanel/HBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/AgentsGrid/RandomAngleSlider" node_paths=PackedStringArray("source_node")]
 script = ExtResource("2_l3cfh")
@@ -364,6 +382,7 @@ distance"
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_vertical = 4
+scrollable = false
 
 [node name="PropsReader" type="Node" parent="RightPanelMargin/VBoxContainer/HBoxContainer/RightPanel/HBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/AgentsGrid/SensorsDistanceSlider" node_paths=PackedStringArray("source_node")]
 script = ExtResource("2_l3cfh")
@@ -419,6 +438,7 @@ custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 size_flags_vertical = 4
 rounded = true
+scrollable = false
 
 [node name="PropsBinder" type="Node" parent="RightPanelMargin/VBoxContainer/HBoxContainer/RightPanel/HBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/ToolsGrid/BrushSizeSlider" node_paths=PackedStringArray("source_node")]
 script = ExtResource("2_l3cfh")
@@ -434,6 +454,34 @@ rounded = true
 script = ExtResource("2_l3cfh")
 source_node = NodePath("../../../../../../../../../../../Logic/DataBridge")
 source_property = &"brush_radius"
+metadata/_custom_type_script = "uid://bua2ufobturut"
+
+[node name="BrushPowerLabel" type="Label" parent="RightPanelMargin/VBoxContainer/HBoxContainer/RightPanel/HBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/ToolsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Brush size"
+
+[node name="BrushPowerSlider" type="HSlider" parent="RightPanelMargin/VBoxContainer/HBoxContainer/RightPanel/HBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/ToolsGrid"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_vertical = 4
+rounded = true
+scrollable = false
+
+[node name="PropsBinder" type="Node" parent="RightPanelMargin/VBoxContainer/HBoxContainer/RightPanel/HBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/ToolsGrid/BrushPowerSlider" node_paths=PackedStringArray("source_node")]
+script = ExtResource("2_l3cfh")
+source_node = NodePath("../../../../../../../../../../../Logic/DataBridge")
+source_property = &"brush_power"
+metadata/_custom_type_script = "uid://bua2ufobturut"
+
+[node name="BrushPowerSpinBox" type="SpinBox" parent="RightPanelMargin/VBoxContainer/HBoxContainer/RightPanel/HBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/ToolsGrid"]
+layout_mode = 2
+rounded = true
+
+[node name="PropsBinder" type="Node" parent="RightPanelMargin/VBoxContainer/HBoxContainer/RightPanel/HBoxContainer/MarginContainer/ScrollContainer/VBoxContainer/ToolsGrid/BrushPowerSpinBox" node_paths=PackedStringArray("source_node")]
+script = ExtResource("2_l3cfh")
+source_node = NodePath("../../../../../../../../../../../Logic/DataBridge")
+source_property = &"brush_power"
 metadata/_custom_type_script = "uid://bua2ufobturut"
 
 [node name="PanelContainer" type="PanelContainer" parent="RightPanelMargin/VBoxContainer"]
@@ -469,7 +517,7 @@ layout_mode = 2
 
 [node name="AntsCompute" type="Node" parent="Logic" node_paths=PackedStringArray("texture_rect")]
 script = ExtResource("1_hyk8p")
-texture_rect = NodePath("../../RightPanelMargin/VBoxContainer/HBoxContainer/TextureRect")
+texture_rect = NodePath("../../RightPanelMargin/VBoxContainer/HBoxContainer/PanelContainer/MarginContainer/TextureRect")
 
 [node name="DataBridge" type="Node" parent="Logic" node_paths=PackedStringArray("compute_node")]
 script = ExtResource("3_k2fmo")

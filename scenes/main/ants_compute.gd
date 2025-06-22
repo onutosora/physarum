@@ -1,8 +1,8 @@
 extends Node
 class_name AntsComputeNode
 
-const width := 600
-const height := 600
+const width := 700
+const height := 700
 const compute_groups := Vector3i(32,32,1)
 
 @export var texture_rect: TextureRect
@@ -17,17 +17,20 @@ const compute_groups := Vector3i(32,32,1)
 @export var sensors_distance: float = 10.0
 @export_category("Tools")
 @export var brush_radius: int = 3
+@export var brush_power: int = 10
 var agents: Array[Agent] = []
 
 var diffuse_shader_file: RDShaderFile = load("res://compute_shaders/diffuse.glsl")
 var fade_shader_file: RDShaderFile = load("res://compute_shaders/fade.glsl")
 var agents_shader_file: RDShaderFile = load("res://compute_shaders/agents.glsl")
 var render_shader_file: RDShaderFile = load("res://compute_shaders/render.glsl")
+var paint_shader_file: RDShaderFile = load("res://compute_shaders/paint.glsl")
 
 var diffuse_compute: ComputeShaderProxy
 var fade_compute: ComputeShaderProxy
 var agents_compute: ComputeShaderProxy
 var render_compute: ComputeShaderProxy
+var paint_compute: ComputeShaderProxy
 
 var pheromone_image: Image
 var render_image: Image
@@ -36,6 +39,10 @@ var agents_directions_image: Image
 
 var render_texture: ImageTexture
 var time:float = 0.0
+
+var paint_position:Vector2i = Vector2i.ZERO
+var paint_radius:int = 0
+var paint_value:int = 0
 
 func _ready() -> void:
 	if not texture_rect:
@@ -70,6 +77,7 @@ func create_compute_shaders() -> void:
 	create_fade_compute_shader()
 	create_agents_compute_shader()
 	create_render_compute_shader()
+	create_paint_compute_shader()
 
 func create_diffuse_compute_shader() -> void:
 	diffuse_compute = ComputeShaderProxy.new(diffuse_shader_file, compute_groups)
@@ -114,6 +122,19 @@ func create_render_compute_shader() -> void:
 	render_compute.bind_texture_uniform(1, render_image, RenderingDevice.DATA_FORMAT_R8G8B8A8_UNORM)
 	render_compute.consolidate_uniforms()
 
+func create_paint_compute_shader() -> void:
+	paint_compute = ComputeShaderProxy.new(paint_shader_file, compute_groups)
+	paint_compute.bind_buffer_uniform(0, PackedInt32Array([
+		width,
+		height,
+		0,
+		0,
+		0,
+		0
+	]).to_byte_array())
+	paint_compute.bind_texture_uniform(1, pheromone_image, RenderingDevice.DATA_FORMAT_R32_SFLOAT)
+	paint_compute.consolidate_uniforms()
+
 func init_agents() -> void:
 	for x in range(width):
 		for y in range(height):
@@ -146,6 +167,7 @@ func _process(delta: float) -> void:
 	execute_fade(delta)
 	execute_agents(delta)
 	execute_render()
+	execute_paint()
 	render_texture.update(render_image)
 	
 	time += delta
@@ -206,20 +228,34 @@ func execute_render() -> void:
 	render_compute.execute()
 	render_compute.get_texture_uniform_data(1, render_image)
 
+func execute_paint() -> void:
+	paint_compute.update_buffer_uniform(0, PackedInt32Array([
+		width,
+		height,
+		paint_position.x,
+		paint_position.y,
+		paint_radius,
+		paint_value
+	]).to_byte_array())
+	paint_compute.update_texture_uniform(1, pheromone_image)
+	paint_compute.execute()
+	paint_compute.get_texture_uniform_data(1, pheromone_image)
+
 func draw_pheromone_input(event: InputEvent) -> void:
-	if (
-		( event is InputEventMouseMotion
-		or 
-		event is InputEventMouseButton)
-		and event.button_mask & 1 != 0
-	):
+	if event is InputEventMouseMotion:
 		var click_pos = get_click_texture_position()
-		if Rect2(0,0,width-1,height-1).has_point(click_pos):
-			for x in range(-brush_radius,brush_radius): for y in range(-brush_radius,brush_radius):
-				var shift = Vector2(x,y)
-				if shift.length() <= brush_radius:
-					var pos = close_position(click_pos + shift)
-					pheromone_image.set_pixelv(pos, Color(100.0,0,0))
+		paint_position = click_pos
+	
+	if event is InputEventMouseButton:
+		if event.button_mask & 3 != 0:
+			var value = brush_power if event.button_mask & 1 != 0 else -100
+			var click_pos = get_click_texture_position()
+			if Rect2(0,0,width-1,height-1).has_point(click_pos):
+				paint_radius = brush_radius
+				paint_value = value
+		else:
+			paint_radius = 0
+		
 
 func get_click_texture_position() -> Vector2:
 	var local_mouse = texture_rect.get_local_mouse_position()
