@@ -57,7 +57,7 @@ void main() {
 
 
     // Calculate new agent position
-    vec2 new_agent_position = agent_position+agent_direction;
+    vec2 new_agent_position = agent_position+agent_direction*timing.delta*60.0;
     new_agent_position = close_position(new_agent_position);
     imageStore(agents_positions, invoc_vec, vec4(new_agent_position.x,new_agent_position.y,0.0,0.0));
     

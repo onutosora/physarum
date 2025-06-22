@@ -203,7 +203,9 @@ func execute_fade(delta: float) -> void:
 	fade_compute.get_texture_uniform_data(2, pheromone_image)
 
 func execute_agents(delta: float) -> void:
-	agents_compute.update_buffer_uniform(0, PackedFloat32Array([delta]).to_byte_array())
+	agents_compute.update_buffer_uniform(0, PackedFloat32Array([
+		delta
+	]).to_byte_array())
 	agents_compute.update_buffer_uniform(1, PackedFloat32Array([
 		width,
 		height,
