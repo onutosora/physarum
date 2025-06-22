@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="Ants"
+run/main_scene="uid://dpmg1chk2u2go"
 config/features=PackedStringArray("4.4", "Forward Plus")
 run/max_fps=60
 config/icon="res://icon.svg"
