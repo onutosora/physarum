@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dpmg1chk2u2go"]
+[gd_scene load_steps=19 format=3 uid="uid://dpmg1chk2u2go"]
 
 [ext_resource type="Script" uid="uid://bxarua4s2i5kq" path="res://scenes/main/ants_compute.gd" id="1_hyk8p"]
 [ext_resource type="Shader" uid="uid://dknpiolko3qsy" path="res://scenes/main/texture_view.gdshader" id="1_iuonh"]
@@ -6,11 +6,13 @@
 [ext_resource type="Script" uid="uid://bua2ufobturut" path="res://utils/props_binder.gd" id="2_l3cfh"]
 [ext_resource type="Script" uid="uid://behgqtguqwt3k" path="res://utils/button_binder.gd" id="3_6q06x"]
 [ext_resource type="Script" uid="uid://bss3p6vospvcq" path="res://scenes/main/data_bridge.gd" id="3_k2fmo"]
+[ext_resource type="Script" uid="uid://d2rtoshwv0usu" path="res://scenes/main/gradient_editor.gd" id="3_yyfjg"]
 [ext_resource type="Script" uid="uid://b5cqwuiw1sc74" path="res://scenes/main/fps_label.gd" id="4_ow5a4"]
+[ext_resource type="Script" uid="uid://bn5l6cwhrcg5h" path="res://scenes/main/select_gradient_window.gd" id="9_b1x3f"]
 
 [sub_resource type="Gradient" id="Gradient_iuonh"]
 offsets = PackedFloat32Array(0, 0.224242, 0.563636, 0.745455, 0.89697, 1)
-colors = PackedColorArray(0, 0, 0, 1, 0.155851, 0.00018487, 0.439646, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.155851, 0.00018487, 0.439646, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0.986458, 0, 0.308666, 1)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_k2fmo"]
 gradient = SubResource("Gradient_iuonh")
@@ -19,9 +21,12 @@ gradient = SubResource("Gradient_iuonh")
 shader = ExtResource("1_iuonh")
 shader_parameter/gradient = SubResource("GradientTexture1D_k2fmo")
 
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_yyfjg"]
+gradient = SubResource("Gradient_iuonh")
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hujxm"]
 shader = ExtResource("2_hujxm")
-shader_parameter/gradient_texture = SubResource("GradientTexture1D_k2fmo")
+shader_parameter/gradient_texture = SubResource("GradientTexture1D_yyfjg")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yyfjg"]
 bg_color = Color(1, 1, 1, 1)
@@ -29,6 +34,16 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b1x3f"]
+shader = ExtResource("2_hujxm")
+shader_parameter/gradient_texture = SubResource("GradientTexture1D_k2fmo")
+
+[sub_resource type="Gradient" id="Gradient_b1x3f"]
+
+[sub_resource type="Gradient" id="Gradient_a8run"]
+offsets = PackedFloat32Array(0, 0.556835, 1)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1)
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -93,11 +108,33 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="GradientEditor" type="Panel" parent="RightPanelMargin/VBoxContainer/HBoxContainer/GradientPanel/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="RightPanelMargin/VBoxContainer/HBoxContainer/GradientPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="GradientEditor" type="Panel" parent="RightPanelMargin/VBoxContainer/HBoxContainer/GradientPanel/MarginContainer/VBoxContainer"]
 material = SubResource("ShaderMaterial_hujxm")
 custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_yyfjg")
+script = ExtResource("3_yyfjg")
+gradient = SubResource("Gradient_iuonh")
+
+[node name="Spacer" type="Control" parent="RightPanelMargin/VBoxContainer/HBoxContainer/GradientPanel/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="RightPanelMargin/VBoxContainer/HBoxContainer/GradientPanel/MarginContainer/VBoxContainer"]
+material = SubResource("ShaderMaterial_b1x3f")
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+focus_mode = 0
+
+[node name="ButtonBinder" type="Node" parent="RightPanelMargin/VBoxContainer/HBoxContainer/GradientPanel/MarginContainer/VBoxContainer/Button" node_paths=PackedStringArray("target")]
+script = ExtResource("3_6q06x")
+target = NodePath("../../../../../../../../SelectGradientWindow")
+target_function = &"popup"
+metadata/_custom_type_script = "uid://behgqtguqwt3k"
 
 [node name="RightPanel" type="PanelContainer" parent="RightPanelMargin/VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -522,3 +559,28 @@ texture_rect = NodePath("../../RightPanelMargin/VBoxContainer/HBoxContainer/Pane
 [node name="DataBridge" type="Node" parent="Logic" node_paths=PackedStringArray("compute_node")]
 script = ExtResource("3_k2fmo")
 compute_node = NodePath("../AntsCompute")
+gradient_texture = SubResource("GradientTexture1D_k2fmo")
+
+[node name="SelectGradientWindow" type="Window" parent="." node_paths=PackedStringArray("data_bridge", "gradient_editor")]
+initial_position = 2
+size = Vector2i(300, 300)
+visible = false
+popup_window = true
+script = ExtResource("9_b1x3f")
+data_bridge = NodePath("../Logic/DataBridge")
+gradient_editor = NodePath("../RightPanelMargin/VBoxContainer/HBoxContainer/GradientPanel/MarginContainer/VBoxContainer/GradientEditor")
+gradients = Array[Gradient]([SubResource("Gradient_iuonh"), SubResource("Gradient_b1x3f"), SubResource("Gradient_a8run")])
+
+[node name="MarginContainer" type="MarginContainer" parent="SelectGradientWindow"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="FlowContainer" type="FlowContainer" parent="SelectGradientWindow/MarginContainer"]
+layout_mode = 2

@@ -3,6 +3,7 @@ extends Node
 signal property_changed(name:StringName, new_value)
 
 @export var compute_node:AntsComputeNode
+@export var gradient_texture: GradientTexture1D
 
 var fade_scale: float:
 	set(val):
