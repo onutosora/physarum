@@ -15,6 +15,9 @@ const compute_groups := Vector3i(32,32,1)
 @export var sensors_angle: float = deg_to_rad(10)
 @export var random_angle: float = deg_to_rad(20)
 @export var sensors_distance: float = 10.0
+@export var madness_threshold: float = 99.0
+@export var madness_duration: float = 0.1
+@export var madness_chance: float = 0.5
 @export_category("Tools")
 @export var brush_radius: int = 3
 @export var brush_power: int = 10
@@ -35,6 +38,7 @@ var paint_compute: ComputeShaderProxy
 var pheromone_image: Image
 var render_image: Image
 var agents_pos_dir_image: Image
+var agents_props_image: Image
 
 var render_texture: ImageTexture
 var time:float = 0.0
@@ -60,13 +64,9 @@ func _ready() -> void:
 
 func create_images() -> void:
 	pheromone_image = Image.create(width, height, false, Image.FORMAT_RH)
-	pheromone_image.fill(Color.BLACK)
-	
 	agents_pos_dir_image = Image.create(width, height, false, Image.FORMAT_RGBAF)
-	agents_pos_dir_image.fill(Color.BLACK)
-	
+	agents_props_image = Image.create(width, height, false, Image.FORMAT_RGBAH)
 	render_image = Image.create(width, height, false, Image.FORMAT_RGBA8)
-	render_image.fill(Color.BLACK)
 
 func create_compute_shaders() -> void:
 	create_diffuse_compute_shader()
@@ -96,7 +96,10 @@ func create_fade_compute_shader() -> void:
 
 func create_agents_compute_shader() -> void:
 	agents_compute = ComputeShaderProxy.new(agents_shader_file, compute_groups)
-	agents_compute.bind_buffer_uniform(0, PackedFloat32Array([0.0]).to_byte_array())
+	agents_compute.bind_buffer_uniform(0, PackedFloat32Array([
+		0.0,
+		0.0
+	]).to_byte_array())
 	agents_compute.bind_buffer_uniform(1, PackedFloat32Array([
 		width,
 		height,
@@ -104,10 +107,14 @@ func create_agents_compute_shader() -> void:
 		agent_pheromone,
 		sensors_angle,
 		random_angle,
-		sensors_distance
+		sensors_distance,
+		madness_threshold,
+		madness_duration,
+		madness_chance
 	]).to_byte_array())
 	agents_compute.bind_texture_uniform(2, pheromone_image, RenderingDevice.DATA_FORMAT_R16_SFLOAT)
 	agents_compute.bind_texture_uniform(3, agents_pos_dir_image, RenderingDevice.DATA_FORMAT_R32G32B32A32_SFLOAT)
+	agents_compute.bind_texture_uniform(4, agents_props_image, RenderingDevice.DATA_FORMAT_R16G16B16A16_SFLOAT)
 	agents_compute.consolidate_uniforms()
 
 func create_render_compute_shader() -> void:
@@ -197,6 +204,7 @@ func execute_fade(delta: float) -> void:
 
 func execute_agents(delta: float) -> void:
 	agents_compute.update_buffer_uniform(0, PackedFloat32Array([
+		time,
 		delta
 	]).to_byte_array())
 	agents_compute.update_buffer_uniform(1, PackedFloat32Array([
@@ -206,13 +214,18 @@ func execute_agents(delta: float) -> void:
 		agent_pheromone,
 		sensors_angle,
 		random_angle,
-		sensors_distance
+		sensors_distance,
+		madness_threshold,
+		madness_duration,
+		madness_chance
 	]).to_byte_array())
 	agents_compute.update_texture_uniform(2, pheromone_image)
 	agents_compute.update_texture_uniform(3, agents_pos_dir_image)
+	agents_compute.update_texture_uniform(4, agents_props_image)
 	agents_compute.execute()
 	agents_compute.get_texture_uniform_data(2, pheromone_image)
 	agents_compute.get_texture_uniform_data(3, agents_pos_dir_image)
+	agents_compute.get_texture_uniform_data(4, agents_props_image)
 
 func execute_render() -> void:
 	render_compute.update_texture_uniform(0, pheromone_image)

@@ -54,6 +54,27 @@ var agents_number: int:
 	get:
 		return compute_node.agents_number
 
+var madness_threshold: float:
+	set(val):
+		compute_node.madness_threshold = val
+		property_changed.emit('madness_threshold', val)
+	get:
+		return compute_node.madness_threshold
+
+var madness_duration: float:
+	set(val):
+		compute_node.madness_duration = val
+		property_changed.emit('madness_duration', val)
+	get:
+		return compute_node.madness_duration
+
+var madness_chance: float:
+	set(val):
+		compute_node.madness_chance = val
+		property_changed.emit('madness_chance', val)
+	get:
+		return compute_node.madness_chance
+
 var brush_radius: int:
 	set(val):
 		compute_node.brush_radius = int(val)
@@ -76,6 +97,9 @@ func _ready() -> void:
 	property_changed.emit('sensors_angle', sensors_angle)
 	property_changed.emit('random_angle', random_angle)
 	property_changed.emit('agents_number', agents_number)
+	property_changed.emit('madness_threshold', madness_threshold)
+	property_changed.emit('madness_duration', madness_duration)
+	property_changed.emit('madness_chance', madness_chance)
 	property_changed.emit('brush_radius', brush_radius)
 	property_changed.emit("brush_power", brush_power)
 
@@ -89,9 +113,12 @@ func clear_field()->void:
 	compute_node.fill_field(0.0)
 
 func randomize_settings()->void:
+	# TODO: prettify settings randomizing
 	#fade_scale       = randf_range(0,100)
 	#diffuse_scale    = randf_range(0,1.0)
-	agent_pheromone  = randf_range(0,100)
-	sensors_distance = randf_range(0,50)
-	sensors_angle    = randf_range(0,90)
-	random_angle     = randf_range(0,90)
+	agent_pheromone   = randf_range(0,100)
+	sensors_distance  = randf_range(0,50)
+	sensors_angle     = randf_range(0,90)
+	random_angle      = randf_range(0,90)
+	#madness_threshold = randf_range(0,100)
+	#madness_duration  = randf_range(0, 2)
